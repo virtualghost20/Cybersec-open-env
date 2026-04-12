@@ -1,0 +1,1 @@
+"""Models module."""&#10;# Model definitions&#10;class TaskModel:&#10;    pass&#10;&#10;def get_model(model_name: str):&#10;    """&#10;    Get model client based on name.&#10;    Stub for OpenAI/HF.&#10;    """&#10;    class DummyModel:&#10;        def __call__(self, *args, **kwargs):&#10;            return {"generated_text": "stub response"}
