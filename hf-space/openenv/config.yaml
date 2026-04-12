@@ -1,8 +1,0 @@
-# OpenEnv config
-benchmarks:
-  cybersec_openenv:
-    tasks:
-      - cybersec_challenge
-graders: graders.py
-models: models.py
-
