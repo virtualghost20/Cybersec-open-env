@@ -1,3 +1,0 @@
-openai
-numpy
-gradio==5.7.0
