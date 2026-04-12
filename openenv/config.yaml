@@ -1,0 +1,80 @@
+env_name: cybersec_openenv
+description: >
+  A cybersecurity simulation environment where an AI agent manages
+  vulnerabilities and system risk through scan, exploit, and defend actions.
+  The agent must reduce system risk and patch vulnerabilities to secure the network.
+
+version: "1.0.0"
+author: openenv-project
+
+endpoints:
+  base_url: "http://localhost:7860"
+  reset: "/reset"
+  step: "/step"
+  state: "/state"
+  health: "/"
+
+observation_space:
+  vulnerabilities:
+    type: integer
+    range: [0, 10]
+    description: Number of active vulnerabilities in the system
+  risk_level:
+    type: float
+    range: [0.0, 1.0]
+    description: Current risk level of the system
+  system_status:
+    type: string
+    values: [compromised, scanning, exploited, defended, secure]
+    description: Current operational status of the system
+
+action_space:
+  - name: scan
+    description: Scan the system for vulnerabilities; small reward
+  - name: exploit
+    description: Exploit a known vulnerability; high reward if vulnerabilities exist
+  - name: defend
+    description: Apply defensive measures to reduce risk level; medium reward
+
+reward:
+  range: [0.0, 1.0]
+  description: Normalized reward signal per step
+
+termination:
+  conditions:
+    - vulnerabilities == 0
+    - risk_level < 0.2
+    - max_steps_reached (default 20)
+
+tasks:
+  - name: scan_challenge
+    description: >
+      Run the agent for 10 steps using primarily scan actions to discover
+      vulnerabilities and maintain low system noise.
+    max_steps: 10
+    primary_action: scan
+    success_criteria: avg_reward >= 0.2
+
+  - name: full_exploitation
+    description: >
+      Exploit all discovered vulnerabilities within 15 steps to reduce
+      the vulnerability count to zero.
+    max_steps: 15
+    primary_action: exploit
+    success_criteria: vulnerabilities == 0
+
+  - name: risk_mitigation
+    description: >
+      Use defend actions to bring the system risk_level below 0.2
+      within 10 steps, achieving a secure system status.
+    max_steps: 10
+    primary_action: defend
+    success_criteria: risk_level < 0.2
+
+runtime:
+  port: 7860
+  framework: fastapi
+  python_version: "3.11"
+  cpu_only: true
+  max_memory_gb: 8
+
